@@ -25,7 +25,7 @@ flowchart TD
     B --> C[AI Agent Decision Module]
     C --> D[AutoML Training Pipeline]
     D --> E[Model Evaluation & Selection]
-    E --> F[Model Saving (.pkl Files)]
+    E --> F[Model Saving \(.pkl Files\)]
     F --> G[Prediction Module]
     G --> H[Streamlit Web UI (Future Integration)]
 ```

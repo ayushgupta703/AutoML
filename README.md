@@ -42,7 +42,7 @@ User → Data Preprocessing → AI Agent → Model Training → Evaluation → P
 
 ## 📂 Folder Structure
 
-````yaml
+````bash
 AutoML-using-AI-Agents/
 │
 ├── app/

@@ -7,7 +7,9 @@ An intelligent system that automates the process of building Machine Learning pi
 ## 🧩 Project Overview
 
 ### 🎯 Objective
+
 To automate the ML workflow by enabling an AI agent to:
+
 - Analyze datasets
 - Handle preprocessing automatically
 - Select suitable ML models
@@ -20,25 +22,27 @@ To automate the ML workflow by enabling an AI agent to:
 User → Data Preprocessing → AI Agent → Model Training → Evaluation → Prediction → UI (Future)
 
 ### 🧠 Modules
-1. **Data Preprocessing** – handles missing values, encoding, scaling.  
-2. **AI Agent (Rule-based)** – auto-analyzes dataset & suggests models.  
-3. **Model Training** – trains multiple models, evaluates, and saves the best one.  
-4. **Prediction** – predicts on new unseen data using saved model & scaler.  
+
+1. **Data Preprocessing** – handles missing values, encoding, scaling.
+2. **AI Agent (Rule-based)** – auto-analyzes dataset & suggests models.
+3. **Model Training** – trains multiple models, evaluates, and saves the best one.
+4. **Prediction** – predicts on new unseen data using saved model & scaler.
 5. **Streamlit UI (Upcoming)** – will provide an interactive interface.
 
 ---
 
 ## ⚙️ Technologies Used
-- **Language:** Python 3.11  
-- **Libraries:** Scikit-learn, Pandas, NumPy, Seaborn, Matplotlib, Joblib  
-- **Automation:** Rule-based agent logic  
+
+- **Language:** Python 3.11
+- **Libraries:** Scikit-learn, Pandas, NumPy, Seaborn, Matplotlib, Joblib
+- **Automation:** Rule-based agent logic
 - **Future Scope:** LLM-based AI agents, Streamlit UI
 
 ---
 
 ## 📂 Folder Structure
 
-```yaml
+````yaml
 AutoML-using-AI-Agents/
 │
 ├── app/
@@ -62,6 +66,17 @@ AutoML-using-AI-Agents/
 
 ---
 
+📅 Current Progress
+| Module                      | Status         |
+| --------------------------- | -------------- |
+| Data Preprocessing          | ✅ Completed    |
+| Model Training & Evaluation | ✅ Completed    |
+| Prediction Module           | ✅ Completed    |
+| AI Agent Integration        | ⚙️ In Progress |
+| Streamlit UI                | 🕓 Upcoming    |
+
+---
+
 ## 🚀 How to Run Locally
 ```bash
 # Clone the repository
@@ -81,11 +96,4 @@ python app/train_pipeline.py
 # Run prediction
 python app/predict_pipeline.py
 
-📅 Current Progress
-| Module                      | Status         |
-| --------------------------- | -------------- |
-| Data Preprocessing          | ✅ Completed    |
-| Model Training & Evaluation | ✅ Completed    |
-| Prediction Module           | ✅ Completed    |
-| AI Agent Integration        | ⚙️ In Progress |
-| Streamlit UI                | 🕓 Upcoming    |
+````

@@ -21,12 +21,12 @@ To automate the ML workflow by enabling an AI agent to:
 
 flowchart TD
     A[User / Dataset Upload] --> B[Data Preprocessing Module]
-    B --> C[AI Agent Decision Module]
-    C --> D[AutoML Training Pipeline]
-    D --> E[Model Evaluation & Selection]
-    E --> F[Model Saving (.pkl Files)]
-    F --> G[Prediction Module]
-    G --> H[Streamlit Web UI (Future Integration)]
+    B[Data Preprocessing Module] --> C[AI Agent Decision Module]
+    C[AI Agent Decision Module] --> D[AutoML Training Pipeline]
+    D[AutoML Training Pipeline] --> E[Model Evaluation & Selection]
+    E[Model Evaluation & Selection] --> F[Model Saving (.pkl Files)]
+    F[Model Saving (.pkl Files)] --> G[Prediction Module]
+    G[Prediction Module] --> H[Streamlit Web UI (Future Integration)]
 
 
 ### 🧠 Modules

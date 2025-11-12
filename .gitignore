@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+
+# Virtual environment
+env/
+venv/
+automl_env/
+
+# Data & Logs
+app/logs/
+*.log
+*.csv
+
+# System files
+.DS_Store
+Thumbs.db

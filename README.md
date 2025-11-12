@@ -19,7 +19,15 @@ To automate the ML workflow by enabling an AI agent to:
 
 ## 🧱 System Design (Architecture)
 
-User → Data Preprocessing → AI Agent → Model Training → Evaluation → Prediction → UI (Future)
+flowchart TD
+    A[User / Dataset Upload] --> B[Data Preprocessing Module]
+    B --> C[AI Agent Decision Module]
+    C --> D[AutoML Training Pipeline]
+    D --> E[Model Evaluation & Selection]
+    E --> F[Model Saving (.pkl Files)]
+    F --> G[Prediction Module]
+    G --> H[Streamlit Web UI (Future Integration)]
+
 
 ### 🧠 Modules
 

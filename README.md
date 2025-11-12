@@ -19,9 +19,6 @@ To automate the ML workflow by enabling an AI agent to:
 
 User → Data Preprocessing → AI Agent → Model Training → Evaluation → Prediction → UI (Future)
 
-markdown
-Copy code
-
 ### 🧠 Modules
 1. **Data Preprocessing** – handles missing values, encoding, scaling.  
 2. **AI Agent (Rule-based)** – auto-analyzes dataset & suggests models.  
@@ -40,6 +37,8 @@ Copy code
 ---
 
 ## 📂 Folder Structure
+
+```yaml
 AutoML-using-AI-Agents/
 │
 ├── app/
@@ -61,16 +60,13 @@ AutoML-using-AI-Agents/
 ├── README.md
 └── .gitignore
 
-yaml
-Copy code
-
 ---
 
 ## 🚀 How to Run Locally
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/AutoML-using-AI-Agents.git
-cd AutoML-using-AI-Agents
+git clone https://github.com/your-username/AutoML.git
+cd AutoML
 
 # Create a virtual environment
 python -m venv venv
@@ -84,8 +80,8 @@ python app/train_pipeline.py
 
 # Run prediction
 python app/predict_pipeline.py
-📅 Current Progress
 
+📅 Current Progress
 | Module                      | Status         |
 | --------------------------- | -------------- |
 | Data Preprocessing          | ✅ Completed    |

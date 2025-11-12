@@ -27,7 +27,7 @@ flowchart TD
     D --> E[Model Evaluation & Selection]
     E --> F["Model Saving (.pkl Files)"]
     F --> G[Prediction Module]
-    G --> H[Streamlit Web UI (Future Integration)]
+    G --> H["Streamlit Web UI (Future Integration)"]
 ```
 
 ---

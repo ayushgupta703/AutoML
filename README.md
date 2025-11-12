@@ -64,16 +64,7 @@ AutoML-using-AI-Agents/
 ├── README.md
 └── .gitignore
 
----
-
-📅 Current Progress
-| Module                      | Status         |
-| --------------------------- | -------------- |
-| Data Preprocessing          | ✅ Completed    |
-| Model Training & Evaluation | ✅ Completed    |
-| Prediction Module           | ✅ Completed    |
-| AI Agent Integration        | ⚙️ In Progress |
-| Streamlit UI                | 🕓 Upcoming    |
+````
 
 ---
 
@@ -97,3 +88,12 @@ python app/train_pipeline.py
 python app/predict_pipeline.py
 
 ````
+
+📅 Current Progress
+| Module                      | Status         |
+| --------------------------- | -------------- |
+| Data Preprocessing          | ✅ Completed    |
+| Model Training & Evaluation | ✅ Completed    |
+| Prediction Module           | ✅ Completed    |
+| AI Agent Integration        | ⚙️ In Progress |
+| Streamlit UI                | 🕓 Upcoming    |

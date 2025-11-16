@@ -17,7 +17,7 @@ print("✅ Model and scaler loaded successfully!\n")
 # -------------------------------
 # Load new unseen data
 # -------------------------------
-new_data = pd.read_csv("new_data.csv")
+new_data = pd.read_csv("../data/new_data.csv")
 print("📂 New data loaded successfully!")
 print(new_data.head())
 
@@ -37,5 +37,5 @@ print(predictions)
 # Save predictions to CSV
 # -------------------------------
 new_data["Predicted_Species"] = predictions
-new_data.to_csv("predicted_output.csv", index=False)
+new_data.to_csv("../data/predicted_output.csv", index=False)
 print("\n✅ Predictions saved to 'predicted_output.csv'!")

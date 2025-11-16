@@ -60,8 +60,9 @@ AutoML-using-AI-Agents/
 │ ├── pipeline.py
 │ ├── train_pipeline.py
 │ ├── predict_pipeline.py
-│ ├── test_pipeline.py
-│ └── logs/
+│ ├── preprocess_pipeline.py
+| ├── best_model_Logistic_Regression.pkl
+| ├── scaler.pkl
 │
 ├── data/
 │ ├── Iris.csv
@@ -69,8 +70,6 @@ AutoML-using-AI-Agents/
 │ ├── new_data.csv
 │ └── predicted_output.csv
 │
-├── best_model_Logistic_Regression.pkl
-├── scaler.pkl
 ├── requirements.txt
 ├── README.md
 └── .gitignore

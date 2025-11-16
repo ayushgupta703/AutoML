@@ -14,7 +14,7 @@ from pipeline import choose_target_column
 # -------------------------
 # Load the cleaned dataset
 # -------------------------
-df = pd.read_csv("preprocessed_dataset.csv")   # This file was saved in Week 2
+df = pd.read_csv("../data/preprocessed_dataset.csv")   # This file was saved in Week 2
 
 # -------------------------
 # Separate features and target

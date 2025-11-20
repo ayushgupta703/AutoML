@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="glass-card">
+    <h3 class="text-white">🧹 Preprocess Dataset</h3>
+
+    {% if res is none %}
+        <form method="POST">
+            <label class="text-white mt-3">Select Target Column</label>
+            <select name="target_column" class="form-select mb-3">
+                <option value="">-- Use default (last column) --</option>
+                {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="btn btn-glass">Run Preprocessing</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Home</a>
+        </form>
+    {% endif %}
+
+    {% if res %}
+        <h5 class="text-white mt-3">Result Logs</h5>
+        <div class="log-box">{{ res.logs | join('\n') }}</div>
+
+        {% if res.preprocessed_path %}
+        <a href="{{ url_for('download', ftype='preprocessed') }}" class="btn btn-glass mt-3">Download Preprocessed Data</a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2 mt-3">Home</a>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}

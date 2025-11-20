@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="text-center text-glass-title mb-4">AutoML System Dashboard</h2>
+
+<!-- DASHBOARD CARDS -->
+<div class="row g-4 justify-content-center">
+
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <h5 class="text-white">📂 Upload</h5>
+            <p class="text-white-50 small">Upload your raw CSV dataset</p>
+            <a href="{{ url_for('upload') }}" class="btn btn-glass mt-2">Upload Raw Dataset</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <h5 class="text-white">🧼 Preprocess</h5>
+            <p class="text-white-50 small">Clean, encode & scale your data</p>
+            <a href="{{ url_for('preprocess') }}" class="btn btn-glass mt-2">Run Preprocessing</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <h5 class="text-white">🧠 Train</h5>
+            <p class="text-white-50 small">Train ML models & select the best</p>
+            <a href="{{ url_for('train') }}" class="btn btn-glass mt-2">Train Model</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="glass-card text-center">
+            <h5 class="text-white">🔮 Predict</h5>
+            <p class="text-white-50 small">Upload new data & get predictions</p>
+            <a href="{{ url_for('predict_upload') }}" class="btn btn-glass mt-2">Upload & Predict</a>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- STATUS SECTION -->
+<div class="glass-card mt-5">
+    <h4 class="text-white mb-4">📊 System Status</h4>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+            <div class="d-flex justify-content-between text-white">
+                <span>📂 Raw Dataset</span>
+                {% if status.raw %}
+                    <span class="badge bg-success">Available</span>
+                {% else %}
+                    <span class="badge bg-danger">Missing</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="d-flex justify-content-between text-white">
+                <span>🧹 Preprocessed Dataset</span>
+                {% if status.preprocessed %}
+                    <span class="badge bg-success">Available</span>
+                {% else %}
+                    <span class="badge bg-danger">Missing</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="d-flex justify-content-between text-white">
+                <span>🧠 Trained Model (.pkl)</span>
+                {% if status.model %}
+                    <span class="badge bg-success">Available</span>
+                {% else %}
+                    <span class="badge bg-danger">Missing</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="d-flex justify-content-between text-white">
+                <span>📏 Scaler (.pkl)</span>
+                {% if status.scaler %}
+                    <span class="badge bg-success">Available</span>
+                {% else %}
+                    <span class="badge bg-danger">Missing</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="d-flex justify-content-between text-white">
+                <span>📄 New Data (Prediction Input)</span>
+                {% if status.new_data %}
+                    <span class="badge bg-success">Available</span>
+                {% else %}
+                    <span class="badge bg-secondary">Not Uploaded</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="d-flex justify-content-between text-white">
+                <span>🔮 Prediction Output</span>
+                {% if status.predicted %}
+                    <span class="badge bg-success">Available</span>
+                {% else %}
+                    <span class="badge bg-secondary">Not Generated</span>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

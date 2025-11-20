@@ -1,0 +1,61 @@
+/* ---- GLASSMORPHISM UI STYLE ---- */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #4158D0, #C850C0, #ff6153);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 0%;}
+    50% {background-position: 100% 100%;}
+    100% {background-position: 0% 0%;}
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.navbar-glass {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-glass {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(8px);
+    transition: 0.25s;
+}
+
+.btn-glass:hover {
+    background: rgba(255,255,255,0.45);
+    color: #000;
+}
+
+.text-glass-title {
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.log-box {
+    background: rgba(255,255,255,0.18);
+    padding: 15px;
+    border-radius: 12px;
+    color: white;
+    white-space: pre-wrap;
+    border: 1px solid rgba(255,255,255,0.35);
+    margin-top: 20px;
+}

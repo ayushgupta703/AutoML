@@ -105,5 +105,5 @@ python app/predict_pipeline.py
 | Data Preprocessing          | ✅ Completed    |
 | Model Training & Evaluation | ✅ Completed    |
 | Prediction Module           | ✅ Completed    |
-| AI Agent Integration        | ⚙️ In Progress |
+| AI Agent Integration        | 🕓 Upcoming |
 | Flask UI                | ⚙️ In Progress    |

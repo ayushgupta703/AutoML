@@ -106,4 +106,4 @@ python app/predict_pipeline.py
 | Model Training & Evaluation | ✅ Completed    |
 | Prediction Module           | ✅ Completed    |
 | AI Agent Integration        | ⚙️ In Progress |
-| Streamlit UI                | 🕓 Upcoming    |
+| Flask UI                | ⚙️ In Progress    |

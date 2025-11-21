@@ -4,6 +4,7 @@ __pycache__/
 *.pyo
 *.pyd
 *.pkl
+*.png
 
 # Virtual environments
 env/
@@ -14,6 +15,7 @@ automl_env/
 app/logs/
 *.log
 *.csv
+*.txt
 
 # System files
 .DS_Store

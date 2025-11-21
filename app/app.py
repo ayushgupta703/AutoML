@@ -82,7 +82,7 @@ def preprocess():
     # POST → run preprocessing and show results on same page
     selected_target = request.form.get("target_column") or None
 
-    res = preprocess_pipeline.run_preprocessing(target=selected_target)
+    res = preprocess_pipeline.run_preprocessing(selected_target=selected_target)
 
     # after preprocessing, raw still exists, so load columns again
     columns = []
@@ -167,4 +167,4 @@ def download(ftype):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

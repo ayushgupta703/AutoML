@@ -2,91 +2,108 @@
 import os
 import joblib
 import pandas as pd
-from pipeline import load_dataset, get_dataset_info, choose_target_column, handle_missing_values, encode_categorical_columns, scale_features
+from pipeline import (
+    load_dataset,
+    handle_missing_values,
+    encode_categorical_columns,
+    scale_features,
+    TARGET_FILE,
+    ENCODERS_PATH,
+    TARGET_ENCODER_PATH,
+    SCALER_PATH,
+    FEATURE_ORDER_PATH
+)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))           # .../AutoML/app
-DATA_DIR = os.path.join(BASE_DIR, "..", "data")                 # .../AutoML/data
-RAW_PATH = os.path.join(DATA_DIR, "raw.csv")                    # expected raw upload path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "..", "data")
+RAW_PATH = os.path.join(DATA_DIR, "raw.csv")
 PREPROCESSED_PATH = os.path.join(DATA_DIR, "preprocessed_dataset.csv")
-LABEL_ENCODERS_PATH = os.path.join(BASE_DIR, "label_encoders.pkl")
-SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
 
 
-def run_preprocessing(target: str = None):
+def run_preprocessing(selected_target=None):
     """
-    Loads raw.csv, runs preprocessing functions and saves preprocessed_dataset.csv.
-    If `target` is provided, use it as the target column; otherwise existing logic (choose_target_column) will run.
-    Returns: dict { success: bool, logs: [str], preprocessed_path:, target: }
+    Preprocess raw.csv and save:
+      - data/preprocessed_dataset.csv
+      - app/label_encoders.pkl      (feature encoders)
+      - app/target_encoder.pkl      (encoder for target if categorical)
+      - app/scaler.pkl
+      - app/feature_columns.pkl     (list of feature column names used for training)
+      - app/target_column.txt
+    Returns dict with logs and preprocessed_path.
     """
     logs = []
     try:
-        logs.append("🔁 Preprocessing started.")
-
-        # 1) Load dataset (use raw.csv uploaded from UI)
         if not os.path.exists(RAW_PATH):
             logs.append(f"❌ Raw file not found at {RAW_PATH}. Upload raw dataset first.")
             return {"success": False, "logs": logs}
 
         df = load_dataset(RAW_PATH)
         if df is None:
-            logs.append("❌ Failed to load dataset (see console).")
+            logs.append("❌ Failed to load raw dataset.")
             return {"success": False, "logs": logs}
-        logs.append(f"✅ Loaded dataset: shape={df.shape}")
 
-        # 2) Preview
-        try:
-            preview = df.head(5).to_dict(orient="records")
-            logs.append(f"Preview (first 5 rows): {preview}")
-        except Exception:
-            logs.append("⚠ Unable to create preview for dataset.")
+        logs.append(f"📥 Loaded raw dataset: shape={df.shape}")
+        logs.append(f"📄 Preview: {df.head(3).to_dict(orient='records')}")
 
-        # 3) Missing values before
-        missing_total = int(df.isnull().sum().sum())
-        logs.append(f"🧾 Missing values (total) before processing: {missing_total}")
+        # Determine target
+        if selected_target and selected_target in df.columns:
+            target = selected_target
+            logs.append(f"🎯 Using target provided by UI: {target}")
+        else:
+            target = df.columns[-1]
+            logs.append(f"ℹ No valid target provided; defaulting to last column: {target}")
 
-        # 4) Handle missing values
+        # Save target to file
+        os.makedirs(os.path.dirname(TARGET_FILE), exist_ok=True)
+        with open(TARGET_FILE, "w", encoding="utf-8") as f:
+            f.write(target)
+        logs.append(f"💾 Saved target column to: {TARGET_FILE}")
+
+        # Handle missing values
         df = handle_missing_values(df)
-        logs.append("🧹 Missing value handling complete (if any).")
+        logs.append("🧹 Missing values handled.")
 
-        # 5) Handle target column selection:
-        if target and target in df.columns:
-            chosen_target = target
-            logs.append(f"🎯 Using target column (from UI): {chosen_target}")
+        # Save original target column to preserve mapping (in case it's object)
+        # We will encode it below if needed
+        # Encode categorical columns (features + possibly target)
+        df_encoded, encoders = encode_categorical_columns(df)
+        logs.append(f"🔤 Encoded categorical columns: {list(encoders.keys())}")
+
+        # If target was encoded, separate its encoder
+        target_encoder = None
+        if target in encoders:
+            target_encoder = encoders.pop(target)
+            joblib.dump(target_encoder, TARGET_ENCODER_PATH)
+            logs.append(f"🔒 Saved target encoder to: {TARGET_ENCODER_PATH}")
+
+        # Determine feature columns (order) — exclude target
+        feature_cols = [c for c in df_encoded.columns if c != target]
+        joblib.dump(feature_cols, FEATURE_ORDER_PATH)
+        logs.append(f"📋 Saved feature column order: {FEATURE_ORDER_PATH}")
+
+        # Scale features only (function will save scaler)
+        df_scaled, scaler = scale_features(df_encoded, target)
+        logs.append("📏 Scaled feature columns (target not scaled).")
+
+        # Save feature encoders (remaining encoders) and scaler (scale_features already saved scaler)
+        joblib.dump(encoders, ENCODERS_PATH)
+        logs.append(f"💾 Saved feature encoders to: {ENCODERS_PATH}")
+        # scaler already saved in pipeline.scale_features via joblib.dump(SCALER_PATH) in pipeline.py
+        if os.path.exists(SCALER_PATH):
+            logs.append(f"💾 Scaler saved to: {SCALER_PATH}")
         else:
-            # fallback to previous behavior (choose_target_column uses input if interactive)
-            # we use the helper choose_target_column but avoid input(): if it expects input() it will default to last column
-            try:
-                chosen_target = target if (target in df.columns) else df.columns[-1]
-                logs.append(f"ℹ No valid target provided in UI. Defaulting to last column: {chosen_target}")
-            except Exception:
-                chosen_target = df.columns[-1]
-                logs.append(f"ℹ Defaulting to last column as target: {chosen_target}")
-
-        # 6) Encode categorical columns
-        df_encoded, label_encoders = encode_categorical_columns(df)
-        if label_encoders:
-            joblib.dump(label_encoders, LABEL_ENCODERS_PATH)
-            logs.append(f"🔡 Saved label encoders to: {LABEL_ENCODERS_PATH}")
-        else:
-            logs.append("ℹ No categorical encoders were created (no object dtype columns).")
-
-        # 7) Scale features (requires target)
-        df_scaled, scaler = scale_features(df_encoded, chosen_target)
-        # Ensure the scaler is saved in the app/ folder
-        try:
+            # Save scaler as fallback
             joblib.dump(scaler, SCALER_PATH)
-            logs.append(f"📏 Scaler saved to: {SCALER_PATH}")
-        except Exception as e:
-            logs.append(f"⚠ Failed to save scaler: {e}")
+            logs.append(f"💾 Scaler saved to: {SCALER_PATH}")
 
-        # 8) Save preprocessed dataset
+        # Save preprocessed CSV (df_scaled includes target as original/encoded values)
         os.makedirs(os.path.dirname(PREPROCESSED_PATH), exist_ok=True)
         df_scaled.to_csv(PREPROCESSED_PATH, index=False)
         logs.append(f"💾 Preprocessed dataset saved to: {PREPROCESSED_PATH}")
 
-        logs.append("✅ Preprocessing finished successfully.")
-        return {"success": True, "logs": logs, "preprocessed_path": PREPROCESSED_PATH, "target": chosen_target}
+        logs.append("✅ Preprocessing completed successfully.")
+        return {"success": True, "logs": logs, "preprocessed_path": PREPROCESSED_PATH}
 
     except Exception as e:
-        logs.append(f"❌ Exception during preprocessing: {e}")
+        logs.append(f"❌ Exception in preprocessing: {e}")
         return {"success": False, "logs": logs, "error": str(e)}

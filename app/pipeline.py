@@ -1,99 +1,84 @@
+# app/pipeline.py
+import os
 import pandas as pd
-import joblib as jb
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import LabelEncoder
+import joblib
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "..", "data")
+
+SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
+ENCODERS_PATH = os.path.join(BASE_DIR, "label_encoders.pkl")
+TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "target_encoder.pkl")
+FEATURE_ORDER_PATH = os.path.join(BASE_DIR, "feature_columns.pkl")
+TARGET_FILE = os.path.join(BASE_DIR, "target_column.txt")
 
 
-def load_dataset(file_path: str) -> pd.DataFrame:
-    """
-    Loads a dataset from a CSV file.
-    """
+def load_dataset(file_path: str):
+    """Load CSV into pandas DataFrame, return df or None and print/log on error."""
     try:
         df = pd.read_csv(file_path)
-        print(f"✅ Dataset loaded successfully! Shape: {df.shape}")
+        print(f"Loaded dataset {file_path} with shape {df.shape}")
         return df
     except Exception as e:
-        print(f"❌ Error loading dataset: {e}")
+        print(f"Failed to load dataset {file_path}: {e}")
         return None
 
 
-def get_dataset_info(df: pd.DataFrame):
-    """
-    Prints dataset info: columns, types, missing values.
-    """
-    print("\n📊 Dataset Info:")
-    print(df.info())
-    print("\n🔍 First 5 rows:")
-    print(df.head())
-    print("\n❓ Missing values:")
-    print(df.isnull().sum())
-
-
-def choose_target_column(df: pd.DataFrame) -> str:
-    """
-    Asks user to choose a target column.
-    If the input is invalid, defaults to the last column.
-    """
-    print("\nAvailable columns:", list(df.columns))
-    user_input = input("👉 Enter the target column name (or press Enter to use last column): ").strip()
-
-    if user_input in df.columns:
-        print(f"✅ Target column set to: {user_input}")
-        return user_input
-    else:
-        suggested = df.columns[-1]
-        print(f"⚠️ Invalid input. Using last column by default: {suggested}")
-        return suggested
+def get_dataset_preview(df, n=5):
+    try:
+        return df.head(n).to_dict(orient="records")
+    except Exception:
+        return []
 
 
 def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Handles missing values ONLY if they exist.
-    - Numeric columns → fill with mean
-    - Categorical columns → fill with mode
+    Handle missing values:
+      - numeric -> mean
+      - categorical (object) -> mode
     """
     missing_count = df.isnull().sum().sum()
     if missing_count == 0:
-        print("✅ No missing values found. Skipping cleaning.")
         return df
 
-    print(f"⚠️ Found {missing_count} missing values. Handling them now...")
     for col in df.columns:
         if df[col].dtype == "object":
-            df[col].fillna(df[col].mode()[0], inplace=True)
+            if df[col].isnull().any():
+                df[col].fillna(df[col].mode().iloc[0], inplace=True)
         else:
-            df[col].fillna(df[col].mean(), inplace=True)
-
-    print("🧹 Missing values handled.")
+            if df[col].isnull().any():
+                df[col].fillna(df[col].mean(), inplace=True)
     return df
 
 
-
-def encode_categorical_columns(df: pd.DataFrame) -> pd.DataFrame:
+def encode_categorical_columns(df: pd.DataFrame):
     """
-    Encodes categorical columns into numeric values.
+    Encode categorical columns using LabelEncoder.
+    Returns: (df_encoded, encoders_dict)
+    Encoders dict maps column_name -> LabelEncoder
     """
-    label_encoders = {}
-    for col in df.columns:
-        if df[col].dtype == "object":
+    encoders = {}
+    df_copy = df.copy()
+    for col in df_copy.columns:
+        if df_copy[col].dtype == "object":
             le = LabelEncoder()
-            df[col] = le.fit_transform(df[col])
-            label_encoders[col] = le
-            print(f"🔡 Encoded column: {col}")
-    return df, label_encoders
+            df_copy[col] = df_copy[col].astype(str)
+            df_copy[col] = le.fit_transform(df_copy[col])
+            encoders[col] = le
+    return df_copy, encoders
 
 
-def scale_features(df: pd.DataFrame, target: str) -> pd.DataFrame:
+def scale_features(df: pd.DataFrame, target_col: str):
+    """
+    Scale feature columns (exclude target_col). Saves scaler to SCALER_PATH.
+    Returns: (df_scaled, scaler)
+    """
     scaler = StandardScaler()
-    features = df.drop(columns=[target])
-    scaled_features = scaler.fit_transform(features)
-
-    df_scaled = pd.DataFrame(scaled_features, columns=features.columns)
-    df_scaled[target] = df[target].values  
-
-    # Save scaler for later use
-    jb.dump(scaler, "scaler.pkl")
-    print("💾 Scaler saved as: scaler.pkl")
-
-    print("📏 Features scaled successfully.")
+    feature_cols = [c for c in df.columns if c != target_col]
+    df_scaled = df.copy()
+    if feature_cols:
+        scaled = scaler.fit_transform(df[feature_cols])
+        df_scaled[feature_cols] = scaled
+    joblib.dump(scaler, SCALER_PATH)
     return df_scaled, scaler

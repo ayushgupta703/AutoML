@@ -2,6 +2,7 @@
 import os
 import joblib
 import pandas as pd
+import numpy as np
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "..", "data")
@@ -15,6 +16,7 @@ ENCODERS_PATH = os.path.join(BASE_DIR, "label_encoders.pkl")
 TARGET_ENCODER_PATH = os.path.join(BASE_DIR, "target_encoder.pkl")
 FEATURE_ORDER_PATH = os.path.join(BASE_DIR, "feature_columns.pkl")
 TARGET_FILE = os.path.join(BASE_DIR, "target_column.txt")
+TASK_FILE = os.path.join(BASE_DIR, "task_type.txt")
 
 
 def run_prediction():
@@ -24,114 +26,104 @@ def run_prediction():
             logs.append(f"❌ New data not found at {NEW_DATA_PATH}. Upload new data first.")
             return {"success": False, "logs": logs}
 
+        if not os.path.exists(BEST_MODEL_PATH):
+            logs.append(f"❌ Best model not found at {BEST_MODEL_PATH}. Train first.")
+            return {"success": False, "logs": logs}
+
         df_new = pd.read_csv(NEW_DATA_PATH)
         logs.append(f"📥 Loaded new data: shape={df_new.shape}")
 
-        if not os.path.exists(BEST_MODEL_PATH):
-            logs.append(f"❌ Model not found at {BEST_MODEL_PATH}. Train first.")
-            return {"success": False, "logs": logs}
+        # load task type
+        task = "classification"
+        if os.path.exists(TASK_FILE):
+            with open(TASK_FILE, "r", encoding="utf-8") as f:
+                task = f.read().strip().lower()
+        logs.append(f"🛠 Task type: {task}")
 
         model = joblib.load(BEST_MODEL_PATH)
         logs.append(f"📦 Loaded model: {BEST_MODEL_PATH}")
 
-        # Load encoders (features)
         encoders = {}
         if os.path.exists(ENCODERS_PATH):
             encoders = joblib.load(ENCODERS_PATH)
             logs.append(f"🔤 Loaded feature encoders: {list(encoders.keys())}")
 
-        # Load target encoder
         target_encoder = None
         if os.path.exists(TARGET_ENCODER_PATH):
             target_encoder = joblib.load(TARGET_ENCODER_PATH)
-            logs.append("🎯 Loaded target encoder.")
+            logs.append("🎯 Loaded target encoder (classification).")
 
-        # Load scaler
+        scaler = None
         if os.path.exists(SCALER_PATH):
             scaler = joblib.load(SCALER_PATH)
             logs.append("📏 Loaded scaler.")
-        else:
-            scaler = None
-            logs.append("⚠ Scaler not found; proceeding without scaling (likely to fail).")
 
-        # Load target column name
+        # target name
+        target_col = None
         if os.path.exists(TARGET_FILE):
             with open(TARGET_FILE, "r", encoding="utf-8") as f:
                 target_col = f.read().strip()
             logs.append(f"🎯 Target column: {target_col}")
-        else:
-            target_col = None
-            logs.append("⚠ target_column.txt missing; prediction may be misaligned.")
 
-        # Load feature order
-        feature_order = None
+        # feature order
         if os.path.exists(FEATURE_ORDER_PATH):
             feature_order = joblib.load(FEATURE_ORDER_PATH)
-            logs.append(f"📋 Loaded training feature order ({len(feature_order)} cols).")
+            logs.append(f"📋 Loaded feature order ({len(feature_order)} cols).")
         else:
-            # fallback to current columns except target if present
             feature_order = [c for c in df_new.columns if c != target_col]
-            logs.append("ℹ Feature order file missing; using new_data columns as order.")
+            logs.append("ℹ Feature order missing; using new_data columns minus target.")
 
-        # Ensure all needed feature columns exist in new data
+        # fill missing features
         missing_cols = [c for c in feature_order if c not in df_new.columns]
         if missing_cols:
-            logs.append(f"⚠ Missing columns in new data: {missing_cols}")
-            # add missing columns with zeros (or NaN->filled later)
             for c in missing_cols:
                 df_new[c] = 0
-            logs.append("ℹ Added missing columns with default 0 values.")
+            logs.append(f"⚠ Added missing columns with default 0: {missing_cols}")
 
-        # Reorder dataframe to match training feature order
+        # order features
         X_new = df_new[feature_order].copy()
-        logs.append("🔀 Reordered new data to training feature order.")
 
-        # Apply encoders to categorical columns where encoder exists
+        # encode categorical features if encoders exist
         for col, encoder in encoders.items():
             if col in X_new.columns:
-                try:
-                    # Convert to string first for safety, then transform unseen to mode mapping
-                    X_new[col] = X_new[col].astype(str)
-                    # handle unseen values: map unseen to most frequent class (encoder.classes_[0])
-                    X_new[col] = X_new[col].apply(
-                        lambda v: encoder.transform([v])[0] if v in encoder.classes_ else encoder.transform([encoder.classes_[0]])[0]
-                    )
-                    logs.append(f"🔡 Encoded column: {col}")
-                except Exception as e:
-                    logs.append(f"⚠ Failed to encode column {col}: {e}")
+                X_new[col] = X_new[col].astype(str)
+                X_new[col] = X_new[col].apply(
+                    lambda v: encoder.transform([v])[0] if v in encoder.classes_ else encoder.transform([encoder.classes_[0]])[0]
+                )
+                logs.append(f"🔡 Encoded column: {col}")
 
-        # Apply scaler if present
+        # scale
         if scaler is not None:
             try:
                 X_scaled = scaler.transform(X_new)
                 X_in = pd.DataFrame(X_scaled, columns=feature_order)
                 logs.append("📏 Scaler applied to new data.")
             except Exception as e:
-                logs.append(f"⚠ Scaler transform failed: {e}. Using raw values.")
+                logs.append(f"⚠ Scaler transform failed: {e}; using raw values.")
                 X_in = X_new
         else:
             X_in = X_new
 
-        # Predict
-        try:
-            preds = model.predict(X_in)
-            logs.append("✅ Prediction completed.")
-        except Exception as e:
-            logs.append(f"❌ Model prediction failed: {e}")
-            return {"success": False, "logs": logs, "error": str(e)}
+        # predict
+        preds = model.predict(X_in)
+        logs.append("✅ Prediction completed.")
 
-        # Decode predictions if target encoder present
-        if target_encoder is not None:
-            try:
-                decoded = target_encoder.inverse_transform(preds.astype(int))
-                logs.append("🔍 Decoded predictions using target encoder.")
-            except Exception:
+        # handle outputs based on task
+        if task == "classification":
+            if target_encoder is not None:
+                try:
+                    decoded = target_encoder.inverse_transform(preds.astype(int))
+                    logs.append("🔍 Predictions decoded using target encoder.")
+                except Exception:
+                    decoded = preds
+                    logs.append("⚠ Failed to decode predictions; using raw values.")
+            else:
                 decoded = preds
-                logs.append("⚠ Failed to decode predictions; returning raw preds.")
-        else:
-            decoded = preds
+        else:  # regression
+            # ensure numeric
+            decoded = np.array(preds).astype(float)
 
-        # Save output: add predicted column name
+        # save predictions
         out_df = df_new.copy()
         pred_col_name = f"Predicted_{target_col}" if target_col else "Predicted"
         out_df[pred_col_name] = decoded

@@ -5,7 +5,18 @@
     <h3 class="text-white mb-3">📂 Upload Raw CSV</h3>
 
     <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" class="form-control mb-3" required>
+        <div class="mb-3">
+            <label class="form-label text-white">Select Task Type</label>
+            <select name="task_type" class="form-select" required>
+                <option value="classification" selected>Classification</option>
+                <option value="regression">Regression</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <input type="file" name="file" class="form-control" accept=".csv" required>
+        </div>
+
         <button class="btn btn-glass">Upload</button>
         <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Home</a>
     </form>

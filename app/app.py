@@ -20,6 +20,7 @@ PRED_OUTPUT_PATH = os.path.join(DATA_DIR, "predicted_output.csv")
 
 MODEL_PATH = os.path.join(BASE_DIR, "best_model.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
+TASK_FILE = os.path.join(BASE_DIR, "task_type.txt")
 
 # ----------------------------------------------------
 # HOME PAGE
@@ -42,22 +43,36 @@ def index():
 
 
 # ----------------------------------------------------
-# UPLOAD RAW DATASET
+# UPLOAD RAW DATASET (with Task Type)
 # ----------------------------------------------------
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     if request.method == "POST":
         file = request.files.get("file")
+        task_type = request.form.get("task_type", "classification").strip().lower()
+
         if not file:
             flash("Please select a CSV file.", "danger")
             return redirect(url_for("upload"))
         if not file.filename.endswith(".csv"):
             flash("Only CSV files allowed.", "danger")
             return redirect(url_for("upload"))
-        file.save(RAW_PATH)
-        flash("Raw dataset uploaded successfully!", "success")
+
+        # Save raw CSV
+        os.makedirs(os.path.join(BASE_DIR, "..", "data"), exist_ok=True)
+        raw_path = os.path.join(BASE_DIR, "..", "data", "raw.csv")
+        file.save(raw_path)
+
+        # Save task type
+        with open(TASK_FILE, "w", encoding="utf-8") as f:
+            f.write(task_type)
+
+        flash(f"Raw dataset uploaded and task set to '{task_type}'.", "success")
+        # go to preprocess page where user can select target too
         return redirect(url_for("preprocess"))
+
     return render_template("upload.html")
+
 
 
 # ----------------------------------------------------

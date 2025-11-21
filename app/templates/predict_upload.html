@@ -5,7 +5,7 @@
     <h3 class="text-white">🔮 Upload New Data for Prediction</h3>
 
     <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" class="form-control mb-3" required>
+        <input type="file" name="file" class="form-control mb-3" required accept=".csv">
         <button class="btn btn-glass">Upload</button>
         <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Home</a>
     </form>

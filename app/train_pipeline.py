@@ -1,4 +1,3 @@
-# app/train_pipeline.py
 import os
 import joblib
 import pandas as pd

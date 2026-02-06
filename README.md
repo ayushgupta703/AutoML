@@ -1,103 +1,141 @@
-# 🤖 AutoML Using AI Agents
+# 🤖 AutoML with AI Agent
 
-An intelligent system that automates the process of building Machine Learning pipelines — from data preprocessing to model training, evaluation, and prediction — using rule-based AI decision agents.
+**An Autonomous Machine Learning Pipeline with a Modern Glassmorphism UI**
 
----
-
-## 🧩 Project Overview
-
-### 🎯 Objective
-
-To automate the ML workflow by enabling an AI agent to:
-
-- Analyze datasets
-- Handle preprocessing automatically
-- Select suitable ML models
-- Train, evaluate, and save the best-performing model
+This project automates the end-to-end Machine Learning workflow—from data ingestion and analysis to model deployment—using **LLM-powered AI Agents** (LangChain + OpenAI) and a robust **Flask** backend.
 
 ---
 
-## 🧱 System Design (Architecture)
+## 🌟 Key Features
+
+### 🧠 Intelligent Analysis (AI Agent)
+- **Automatic Insight**: Uses **OpenAI GPT-4o** to analyze dataset structure.
+- **Smart Decision Making**: Automatically determines the **Target Column**, **Problem Type** (Classification vs. Regression), and optimal **Models** to train.
+- **Resilient Logic**: Fallback heuristics ensure continuity even if the API is unavailable.
+
+### ⚙️ Robust Preprocessing Pipeline
+- **Missing Value Imputation**: Automatically fills missing data (Mean for numeric, Mode for categorical).
+- **Feature Encoding**: Handles categorical variables using `LabelEncoder`.
+- **Scaling**: Standardizes features using `StandardScaler` for optimal model performance.
+
+### 🏋️‍♂️ Multi-Model Training & Evaluation
+- **Classification**: Logistic Regression, Decision Tree, Random Forest, SVM.
+- **Regression**: Linear Regression, Random Forest, Gradient Boosting, SVR.
+- **Performance Visualization**: Generates and displays model comparison plots (Accuracy/RMSE).
+- **Best Model Selection**: Automatically saves the highest-performing model for inference.
+
+### 💻 Modern Web Interface
+- **Glassmorphism Design**: A sleek, user-friendly dashboard built with Bootstrap 5 and custom CSS.
+- **Progress Tracking**: Real-time status indicators for Data, Model, and Prediction stages.
+- **Downloadable Artifacts**: Easy access to preprocessed data, trained models, and prediction results.
+
+---
+
+## 🏗 System Architecture
 
 ```mermaid
 flowchart TD
-    A[User / Dataset Upload] --> B[Data Preprocessing Module]
-    B --> C[AI Agent Decision Module]
-    C --> D[AutoML Training Pipeline]
-    D --> E[Model Evaluation & Selection]
-    E --> F["Model Saving (.pkl Files)"]
-    F --> G[Prediction Module]
-    G --> H["Streamlit Web UI (Future Integration)"]
+    User[User Upload] -->|Raw CSV| AI[AI Agent (LangChain/GPT)]
+    AI -->|Config| Pre[Preprocessing Pipeline]
+    Pre -->|Clean Data| Train[Training Pipeline]
+    Train -->|Train Multiple| Eval[Evaluation & Comparison]
+    Eval -->|Best Model| Store[Model Artifacts (.pkl)]
+    Store -->|Inference| Predict[Prediction Module]
+    
+    subgraph UI [Flask Web Interface]
+    Dashboard --> AI
+    Dashboard --> Predict
+    end
 ```
 
 ---
 
-### 🧠 Modules
+## 🛠 Tech Stack
 
-1. **Data Preprocessing** – handles missing values, encoding, scaling.
-2. **AI Agent (Rule-based)** – auto-analyzes dataset & suggests models.
-3. **Model Training** – trains multiple models, evaluates, and saves the best one.
-4. **Prediction** – predicts on new unseen data using saved model & scaler.
-5. **Streamlit UI (Upcoming)** – will provide an interactive interface.
-
----
-
-## ⚙️ Technologies Used
-
-- **Language:** Python 3.11
-- **Libraries:** Scikit-learn, Pandas, NumPy, Seaborn, Matplotlib, Joblib
-- **Automation:** Rule-based agent logic
-- **Future Scope:** LLM-based AI agents, Streamlit UI
+- **Core**: Python 3.11
+- **AI & LLM**: LangChain, OpenAI API
+- **Web Framework**: Flask (Jinja2 Templates)
+- **ML Libraries**: Scikit-learn, Pandas, NumPy, Joblib
+- **Visualization**: Matplotlib
+- **Frontend**: HTML5, Bootstrap 5, Custom CSS (Glassmorphism)
 
 ---
 
-## 📂 Folder Structure
+## 📂 Project Structure
 
-````bash
+```bash
 AutoML-using-AI-Agents/
 │
 ├── app/
-│ ├── pipeline.py
-│ ├── train_pipeline.py
-│ ├── predict_pipeline.py
+│ ├── static/
+│ │ ├── css/
+│ │ │ └── glass.css       # Custom Glassmorphism styles
+│ │ └── accuracy_plot.png # Generated performance plot
+│ ├── templates/
+│ │ ├── base.html         # Base layout with Navbar
+│ │ └── index.html        # Main Dashboard
+│ ├── ai_agent.py         # LLM logic (LangChain)
+│ ├── app.py              # Flask server & Routes
+│ ├── pipeline.py         # Core utilities
 │ ├── preprocess_pipeline.py
-| ├── best_model_Logistic_Regression.pkl
-| ├── scaler.pkl
+│ ├── train_pipeline.py
+│ └── predict_pipeline.py
 │
-├── data/
-│ ├── Iris.csv
-│ ├── preprocessed_dataset.csv
-│ ├── new_data.csv
-│ └── predicted_output.csv
-│
+├── data/                 # Data storage (Raw, Processed, Outputs)
+├── .env                  # Environment variables (OpenAI Key)
 ├── requirements.txt
-├── README.md
-└── .gitignore
-
-````
+└── README.md
+```
 
 ---
 
-## 🚀 How to Run Locally
+## 🚀 Getting Started
+
+### 1. Clone the Repository
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/AutoML.git
-cd AutoML
+git clone https://github.com/your-username/AutoML-with-AI-Agent.git
+cd AutoML-with-AI-Agent
+```
 
-# Create a virtual environment
+### 2. Set Up Virtual Environment
+```bash
 python -m venv venv
+# Windows
 venv\Scripts\activate
+# Mac/Linux
+source venv/bin/activate
+```
 
-# Install dependencies
+### 3. Install Dependencies
+```bash
 pip install -r requirements.txt
+```
 
-# Run training pipeline
-python app/train_pipeline.py
+### 4. Configure Environment
+Create a `.env` file in the root directory and add your OpenAI API Key:
+```ini
+OPENAI_API_KEY=sk-your-openai-api-key-here
+# Optional: Model selection
+OPENAI_MODEL=gpt-4o-mini
+```
 
-# Run prediction
-python app/predict_pipeline.py
+### 5. Run the Application
+```bash
+python app/app.py
+```
+> Access the dashboard at: **http://127.0.0.1:5000**
 
-````
+---
+
+## � How to Use
+
+1.  **Upload Dataset**: Select your raw CSV file on the dashboard.
+2.  **Run AutoML**: Click "Run AutoML". The AI Agent will analyze the data, preprocess it, and train the best model.
+3.  **View Results**: Check the training logs and model accuracy graph.
+4.  **Predict**: Upload a new dataset (without the target column) to generate predictions.
+5.  **Download**: Save the clean data or prediction results for offline use.
+
+---
 
 📅 Current Progress
 | Module                      | Status         |
@@ -106,4 +144,4 @@ python app/predict_pipeline.py
 | Model Training & Evaluation | ✅ Completed    |
 | Prediction Module           | ✅ Completed    |
 | AI Agent Integration        | ✅ Completed    |
-| Flask UI                | ⚙️ In Progress    |
+| Flask UI                    | ✅ Completed    |

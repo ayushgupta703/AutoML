@@ -1,61 +1,490 @@
-/* ---- GLASSMORPHISM UI STYLE ---- */
+/* ---- AutoML with AI Agent - Glass UI ---- */
 
 body {
     margin: 0;
     padding: 0;
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(135deg, #4158D0, #C850C0, #ff6153);
-    background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
-}
-
-@keyframes gradientBG {
-    0% {background-position: 0% 0%;}
-    50% {background-position: 100% 100%;}
-    100% {background-position: 0% 0%;}
-}
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    padding: 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    font-family: "Poppins", "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 
 .navbar-glass {
-    background: rgba(255,255,255,0.12);
+    background: rgba(15, 52, 96, 0.85);
     backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.btn-glass {
-    background: rgba(255,255,255,0.25);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.4);
-    backdrop-filter: blur(8px);
-    transition: 0.25s;
-}
-
-.btn-glass:hover {
-    background: rgba(255,255,255,0.45);
-    color: #000;
+.glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
 .text-glass-title {
     font-weight: 600;
     color: white;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.hero-section {
+    padding: 0.5rem 0;
+}
+
+/* ---- Flow steps ---- */
+.flow-section .flow-step {
+    padding: 1.25rem;
+    border-radius: 14px;
+    border: 1px dashed rgba(255,255,255,0.2);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.flow-step-ready {
+    border-color: rgba(100, 200, 255, 0.4);
+    background: rgba(100, 200, 255, 0.06);
+}
+
+.flow-step-done {
+    border-style: solid;
+    border-color: rgba(100, 255, 150, 0.35);
+    background: rgba(100, 255, 150, 0.06);
+}
+
+.flow-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.flow-step-done .flow-num {
+    background: rgba(100, 255, 150, 0.4);
+}
+
+/* ---- Buttons ---- */
+.btn-glass {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(8px);
+    transition: 0.2s;
+}
+
+.btn-glass:hover:not(:disabled) {
+    background: rgba(255,255,255,0.35);
+    color: #fff;
+    border-color: rgba(255,255,255,0.5);
+}
+
+.btn-glass:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-automl {
+    background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 212, 170, 0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-automl:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 212, 170, 0.45);
+    color: #fff;
+}
+
+.btn-automl:disabled {
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* ---- Result section ---- */
+.result-section .result-item {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
 }
 
 .log-box {
-    background: rgba(255,255,255,0.18);
-    padding: 15px;
-    border-radius: 12px;
-    color: white;
+    background: #0d1117;
+    color: #3fb950;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
     white-space: pre-wrap;
-    border: 1px solid rgba(255,255,255,0.35);
-    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid rgba(63, 185, 80, 0.2);
+    font-family: "Consolas", "Monaco", monospace;
 }
+
+.log-box-inner {
+    margin: 0;
+    border-radius: 0 0 10px 10px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.glass-accordion {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.glass-accordion .accordion-button {
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 4px;
+}
+
+.glass-accordion .accordion-button:not(.collapsed) {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    box-shadow: none;
+}
+
+.glass-accordion .accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.glass-accordion .accordion-button::after {
+    filter: brightness(0) invert(1);
+}
+
+/* ---- Status badges ---- */
+.status-compact .badge-status {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge-status.badge-ok {
+    background: rgba(100, 255, 150, 0.25);
+    color: #7bed9f;
+    border: 1px solid rgba(100, 255, 150, 0.4);
+}
+
+.badge-status.badge-missing {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ---- Alerts ---- */
+.alert-success { background: rgba(100, 255, 150, 0.2); border-color: rgba(100, 255, 150, 0.4); color: #d5f5e3; }
+.alert-danger { background: rgba(255, 100, 100, 0.2); border-color: rgba(255, 100, 100, 0.4); color: #fadbd8; }
+.alert-warning { background: rgba(255, 200, 100, 0.2); border-color: rgba(255, 200, 100, 0.4); color: #fdebd0; }
+
+/* ---- Single-page step cards ---- */
+.step-card {
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+.step-card-ready {
+    border-color: rgba(100, 200, 255, 0.25);
+    box-shadow: 0 0 0 1px rgba(100, 200, 255, 0.15);
+}
+.step-card-done {
+    border-color: rgba(100, 255, 150, 0.3);
+    box-shadow: 0 0 0 1px rgba(100, 255, 150, 0.15);
+}
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.step-card-done .step-num {
+    background: rgba(100, 255, 150, 0.4);
+    color: #fff;
+}
+.step-badge {
+    margin-left: auto;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.step-badge-ok {
+    background: rgba(100, 255, 150, 0.25);
+    color: #7bed9f;
+}
+.step-badge-ready {
+    background: rgba(100, 200, 255, 0.25);
+    color: #74b9ff;
+}
+
+/* ---- File input wrap ---- */
+.file-input-wrap {
+    display: block;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px dashed rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+.file-input-wrap:hover {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.08);
+}
+.file-input-wrap .file-input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    color: rgba(255,255,255,0.9);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+.file-input-wrap .file-input::file-selector-button {
+    padding: 0.4rem 0.75rem;
+    margin-right: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.15);
+    color: white;
+    cursor: pointer;
+}
+.file-input-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+}
+.file-input-name {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+}
+
+/* ---- Form controls dark ---- */
+.step-card .form-control {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+}
+.step-card .form-control:focus {
+    background: rgba(0,0,0,0.25);
+    border-color: rgba(100, 200, 255, 0.5);
+    color: white;
+    box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.15);
+}
+
+/* ---- Result card ---- */
+.result-card .result-header { margin-bottom: 1rem; }
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+.result-item { display: flex; flex-direction: column; gap: 0.25rem; }
+.result-item-full { grid-column: 1 / -1; }
+.result-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.result-value { color: rgba(255,255,255,0.95); font-size: 0.95rem; }
+
+/* ---- Logs accordion ---- */
+.logs-accordion .glass-accordion-item {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.logs-accordion .glass-accordion-btn {
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+.logs-accordion .glass-accordion-btn:not(.collapsed) {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    box-shadow: none;
+}
+.logs-accordion .glass-accordion-btn:focus { box-shadow: none; }
+.logs-accordion .glass-accordion-btn::after { filter: brightness(0) invert(1); }
+.log-box-inner {
+    margin: 0;
+    border-radius: 0 0 10px 10px;
+    max-height: 220px;
+    overflow-y: auto;
+    font-size: 0.82rem;
+}
+
+/* ---- Status pipeline ---- */
+.status-pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+.status-arrow {
+    color: rgba(255,255,255,0.35);
+    font-size: 0.9rem;
+}
+.status-card .badge-status {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.downloads { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* ---- Loading state on buttons ---- */
+.btn-submit.is-loading {
+    pointer-events: none;
+    opacity: 0.85;
+}
+.btn-submit.is-loading .btn-text { visibility: hidden; }
+.btn-submit.is-loading .btn-spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.2em;
+    height: 1.2em;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.btn-submit { position: relative; }
+.btn-submit .btn-text { display: inline-block; }
+.btn-submit .btn-spinner { display: none; }
+.btn-submit.is-loading .btn-spinner { display: block; }
+
+/* ---- Step box (single-page) ---- */
+.step-container { border-radius: 18px; }
+.step-box {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    height: 100%;
+    backdrop-filter: blur(6px);
+    border: 1px solid transparent;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+.step-box-ready {
+    border-color: rgba(100, 200, 255, 0.2);
+    box-shadow: 0 0 0 1px rgba(100, 200, 255, 0.08);
+}
+.step-box-done {
+    border-color: rgba(63, 185, 80, 0.25);
+    box-shadow: 0 0 0 1px rgba(63, 185, 80, 0.1);
+}
+.step-num-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+.step-box-done .step-num-inline {
+    background: rgba(63, 185, 80, 0.35);
+    color: #3fb950;
+}
+.step-done-msg {
+    color: #3fb950;
+    font-weight: 500;
+}
+
+/* ---- Form control dark (inside step / glass) ---- */
+.form-control-dark,
+.step-container .form-control,
+.glass-card .form-control {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+}
+.form-control-dark:focus,
+.step-container .form-control:focus,
+.glass-card .form-control:focus {
+    background: rgba(0,0,0,0.3);
+    border-color: rgba(100, 200, 255, 0.45);
+    color: white;
+    box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.12);
+}
+.form-control-dark::file-selector-button,
+.step-container .form-control::file-selector-button {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+}
+
+/* ---- Log box wrapper (title + terminal box) ---- */
+.log-box-wrap { margin-bottom: 1rem; }
+.log-box-wrap:last-child { margin-bottom: 0; }
+.log-box-title {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.log-box-wrap .log-box { margin-top: 0; }
+
+/* ---- Status pipeline (arrows between badges) ---- */
+.status-card .status-pipeline { gap: 0.5rem; }
+.status-card .badge-status {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.status-card .status-arrow {
+    color: rgba(255,255,255,0.35);
+    font-size: 0.85rem;
+}
+
+/* ---- Hero ---- */
+.hero-block { padding: 0.5rem 0; }

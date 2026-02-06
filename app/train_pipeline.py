@@ -35,7 +35,7 @@ os.makedirs(STATIC_DIR, exist_ok=True)
 ACCURACY_PLOT = os.path.join(STATIC_DIR, "accuracy_plot.png")
 
 
-def run_training():
+def run_training(models_to_train=None):
     logs = []
     try:
         logs.append("🏁 Training started.")
@@ -92,8 +92,13 @@ def run_training():
                 "Logistic Regression": LogisticRegression(max_iter=1000),
                 "Decision Tree": DecisionTreeClassifier(),
                 "Random Forest": RandomForestClassifier(),
-                "SVM": SVC()
+                "SVM": SVC(),
             }
+
+            if models_to_train:
+                want = {str(m).strip() for m in models_to_train if str(m).strip()}
+                models = {name: m for name, m in models.items() if name in want}
+                logs.append(f"🤖 Model filter applied (classification): {list(models.keys())}")
             for name, model in models.items():
                 logs.append(f"⚙ Training (classification) {name} ...")
                 try:
@@ -126,8 +131,13 @@ def run_training():
                 "Linear Regression": LinearRegression(),
                 "Random Forest Regressor": RandomForestRegressor(),
                 "Gradient Boosting": GradientBoostingRegressor(),
-                "SVR": SVR()
+                "SVR": SVR(),
             }
+
+            if models_to_train:
+                want = {str(m).strip() for m in models_to_train if str(m).strip()}
+                models = {name: m for name, m in models.items() if name in want}
+                logs.append(f"🤖 Model filter applied (regression): {list(models.keys())}")
             for name, model in models.items():
                 logs.append(f"⚙ Training (regression) {name} ...")
                 try:

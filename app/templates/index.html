@@ -1,120 +1,181 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2 class="text-center text-glass-title mb-4">AutoML System Dashboard</h2>
-
-<!-- DASHBOARD CARDS -->
-<div class="row g-4 justify-content-center">
-
-    <div class="col-md-3">
-        <div class="glass-card text-center">
-            <h5 class="text-white">📂 Upload</h5>
-            <p class="text-white-50 small">Upload your raw CSV dataset</p>
-            <a href="{{ url_for('upload') }}" class="btn btn-glass mt-2">Upload Raw Dataset</a>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="glass-card text-center">
-            <h5 class="text-white">🧼 Preprocess</h5>
-            <p class="text-white-50 small">Clean, encode & scale your data</p>
-            <a href="{{ url_for('preprocess') }}" class="btn btn-glass mt-2">Run Preprocessing</a>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="glass-card text-center">
-            <h5 class="text-white">🧠 Train</h5>
-            <p class="text-white-50 small">Train ML models & select the best</p>
-            <a href="{{ url_for('train') }}" class="btn btn-glass mt-2">Train Model</a>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="glass-card text-center">
-            <h5 class="text-white">🔮 Predict</h5>
-            <p class="text-white-50 small">Upload new data & get predictions</p>
-            <a href="{{ url_for('predict_upload') }}" class="btn btn-glass mt-2">Upload & Predict</a>
-        </div>
-    </div>
-
+<!-- HERO -->
+<div class="hero-block text-center mb-5">
+    <h1 class="display-5 fw-bold text-glass-title mb-2">AutoML with AI Agent</h1>
+    <p class="text-white-50 mb-0">Upload → AI trains → Predict. Fully automated.</p>
 </div>
 
+<!-- STEP CONTAINER -->
+<div class="glass-card step-container p-4 mb-4">
 
-<!-- STATUS SECTION -->
-<div class="glass-card mt-5">
-    <h4 class="text-white mb-4">📊 System Status</h4>
+    <div class="row g-4">
 
-    <div class="row">
+        <!-- STEP 1 -->
+        <div class="col-md-4">
+            <div class="step-box {% if status.raw %}step-box-done{% endif %}">
+                <span class="step-num-inline">1</span>
+                <h6 class="text-white mb-3">Upload Dataset</h6>
 
-        <div class="col-md-6 mb-3">
-            <div class="d-flex justify-content-between text-white">
-                <span>📂 Raw Dataset</span>
+                <form method="POST" enctype="multipart/form-data" class="step-form">
+                    <input type="hidden" name="action" value="upload_raw">
+                    <input type="file" name="file" class="form-control form-control-dark mb-3" accept=".csv" required>
+                    <button type="submit" class="btn btn-glass w-100 btn-submit">
+                        <span class="btn-text">Upload</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                </form>
+
                 {% if status.raw %}
-                    <span class="badge bg-success">Available</span>
-                {% else %}
-                    <span class="badge bg-danger">Missing</span>
+                    <small class="step-done-msg d-block mt-2">✔ Dataset ready</small>
                 {% endif %}
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <div class="d-flex justify-content-between text-white">
-                <span>🧹 Preprocessed Dataset</span>
-                {% if status.preprocessed %}
-                    <span class="badge bg-success">Available</span>
-                {% else %}
-                    <span class="badge bg-danger">Missing</span>
-                {% endif %}
-            </div>
-        </div>
+        <!-- STEP 2 -->
+        <div class="col-md-4">
+            <div class="step-box {% if status.raw %}step-box-ready{% endif %} {% if status.model %}step-box-done{% endif %}">
+                <span class="step-num-inline">2</span>
+                <h6 class="text-white mb-3">Run AutoML</h6>
 
-        <div class="col-md-6 mb-3">
-            <div class="d-flex justify-content-between text-white">
-                <span>🧠 Trained Model (.pkl)</span>
+                <form method="POST" class="step-form">
+                    <input type="hidden" name="action" value="run_automl">
+                    <button type="submit"
+                            class="btn btn-automl w-100 btn-submit"
+                            {% if not status.raw %}disabled{% endif %}>
+                        <span class="btn-text">Run AutoML</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                </form>
+
                 {% if status.model %}
-                    <span class="badge bg-success">Available</span>
-                {% else %}
-                    <span class="badge bg-danger">Missing</span>
+                    <small class="step-done-msg d-block mt-2">✔ Model trained</small>
+                {% elif not status.raw %}
+                    <small class="text-white-50 d-block mt-2">Upload dataset first</small>
                 {% endif %}
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <div class="d-flex justify-content-between text-white">
-                <span>📏 Scaler (.pkl)</span>
-                {% if status.scaler %}
-                    <span class="badge bg-success">Available</span>
-                {% else %}
-                    <span class="badge bg-danger">Missing</span>
-                {% endif %}
-            </div>
-        </div>
+        <!-- STEP 3 -->
+        <div class="col-md-4">
+            <div class="step-box {% if status.model %}step-box-ready{% endif %} {% if status.predicted %}step-box-done{% endif %}">
+                <span class="step-num-inline">3</span>
+                <h6 class="text-white mb-3">Predict</h6>
 
-        <div class="col-md-6 mb-3">
-            <div class="d-flex justify-content-between text-white">
-                <span>📄 New Data (Prediction Input)</span>
-                {% if status.new_data %}
-                    <span class="badge bg-success">Available</span>
-                {% else %}
-                    <span class="badge bg-secondary">Not Uploaded</span>
-                {% endif %}
-            </div>
-        </div>
+                <form method="POST" enctype="multipart/form-data" class="step-form">
+                    <input type="hidden" name="action" value="predict">
+                    <input type="file"
+                           name="predict_file"
+                           class="form-control form-control-dark mb-3"
+                           accept=".csv"
+                           {% if not status.model %}disabled{% endif %}
+                           required>
+                    <button type="submit"
+                            class="btn btn-glass w-100 btn-submit"
+                            {% if not status.model %}disabled{% endif %}>
+                        <span class="btn-text">Predict</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                </form>
 
-        <div class="col-md-6 mb-3">
-            <div class="d-flex justify-content-between text-white">
-                <span>🔮 Prediction Output</span>
                 {% if status.predicted %}
-                    <span class="badge bg-success">Available</span>
-                {% else %}
-                    <span class="badge bg-secondary">Not Generated</span>
+                    <small class="step-done-msg d-block mt-2">✔ Predictions ready</small>
+                {% elif not status.model %}
+                    <small class="text-white-50 d-block mt-2">Run AutoML first</small>
                 {% endif %}
             </div>
         </div>
 
     </div>
+</div>
 
+<!-- RESULTS SECTION -->
+{% if last and (last_type == "predict" or (last_type == "automl" and last.preprocess is defined and last.train is defined)) %}
+<div class="glass-card p-4 mb-4 results-card">
+
+    <h5 class="text-white mb-3 d-flex align-items-center gap-2">
+        <span>📋</span> Results
+    </h5>
+
+    {% if last_type == "automl" %}
+        {% set dec = last.decision if last.decision else {} %}
+
+        <div class="results-summary row mb-4">
+            <div class="col-md-6 mb-2 mb-md-0">
+                <p class="text-white mb-1"><strong>Target:</strong> {{ dec.get("target_column", "—") }}</p>
+                <p class="text-white mb-1"><strong>Problem type:</strong> {{ dec.get("problem_type", "—") }}</p>
+                <p class="text-white mb-1"><strong>Models:</strong> {{ (dec.get("models") or []) | join(", ") }}</p>
+            </div>
+            <div class="col-md-6">
+                <p class="text-white-50 mb-0"><strong>Reasoning:</strong> {{ dec.get("reasoning", "—") }}</p>
+            </div>
+        </div>
+
+        <div class="accordion accordion-flush logs-accordion" id="resultsLogsAccordion">
+            <div class="accordion-item glass-accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed glass-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#preprocessLogs" aria-expanded="false" aria-controls="preprocessLogs">
+                        Preprocessing logs
+                    </button>
+                </h2>
+                <div id="preprocessLogs" class="accordion-collapse collapse" data-bs-parent="#resultsLogsAccordion">
+                    <div class="accordion-body p-0">
+                        <div class="log-box log-box-inner">{{ (last.preprocess.logs or []) | join('\n') }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item glass-accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed glass-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#trainLogs" aria-expanded="false" aria-controls="trainLogs">
+                        Training logs
+                    </button>
+                </h2>
+                <div id="trainLogs" class="accordion-collapse collapse" data-bs-parent="#resultsLogsAccordion">
+                    <div class="accordion-body p-0">
+                        <div class="log-box log-box-inner">{{ (last.train.logs or []) | join('\n') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% elif last_type == "predict" %}
+        <div class="accordion accordion-flush logs-accordion" id="predictLogsAccordion">
+            <div class="accordion-item glass-accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed glass-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#predictLogs" aria-expanded="false" aria-controls="predictLogs">
+                        Prediction logs
+                    </button>
+                </h2>
+                <div id="predictLogs" class="accordion-collapse collapse" data-bs-parent="#predictLogsAccordion">
+                    <div class="accordion-body p-0">
+                        <div class="log-box log-box-inner">{{ (last.logs or []) | join('\n') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endif %}
+
+<!-- STATUS BAR -->
+<div class="glass-card p-4 status-card">
+    <h6 class="text-white mb-3">System status</h6>
+
+    <div class="status-pipeline d-flex align-items-center gap-2 flex-wrap">
+        <span class="badge-status {% if status.raw %}badge-ok{% else %}badge-missing{% endif %}">Dataset</span>
+        <span class="status-arrow">→</span>
+        <span class="badge-status {% if status.model %}badge-ok{% else %}badge-missing{% endif %}">Model</span>
+        <span class="status-arrow">→</span>
+        <span class="badge-status {% if status.predicted %}badge-ok{% else %}badge-missing{% endif %}">Predictions</span>
+    </div>
+
+    <div class="mt-3 d-flex gap-2 flex-wrap downloads">
+        {% if status.raw %}<a href="{{ url_for('download', ftype='raw') }}" class="btn btn-glass btn-sm">Download raw</a>{% endif %}
+        {% if status.preprocessed %}<a href="{{ url_for('download', ftype='preprocessed') }}" class="btn btn-glass btn-sm">Download preprocessed</a>{% endif %}
+        {% if status.predicted %}<a href="{{ url_for('download', ftype='predicted') }}" class="btn btn-glass btn-sm">Download predictions</a>{% endif %}
+    </div>
 </div>
 
 {% endblock %}

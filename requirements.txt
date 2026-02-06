@@ -6,3 +6,7 @@ matplotlib
 seaborn
 joblib
 Werkzeug
+langchain
+langchain-openai
+openai
+python-dotenv

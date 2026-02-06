@@ -35,11 +35,11 @@ This project automates the end-to-end Machine Learning workflow—from data inge
 
 ```mermaid
 flowchart TD
-    User[User Upload] -->|Raw CSV| AI[AI Agent (LangChain/GPT)]
+    User[User Upload] -->|Raw CSV| AI["AI Agent (LangChain/GPT)"]
     AI -->|Config| Pre[Preprocessing Pipeline]
     Pre -->|Clean Data| Train[Training Pipeline]
     Train -->|Train Multiple| Eval[Evaluation & Comparison]
-    Eval -->|Best Model| Store[Model Artifacts (.pkl)]
+    Eval -->|Best Model| Store["Model Artifacts (.pkl)"]
     Store -->|Inference| Predict[Prediction Module]
     
     subgraph UI [Flask Web Interface]

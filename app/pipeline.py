@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import joblib
+from pandas.api.types import is_object_dtype, is_string_dtype, is_categorical_dtype
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,14 +36,20 @@ def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
     """
     Handle missing values:
       - numeric -> mean
-      - categorical (object) -> mode
+      - categorical (object/string) -> mode
     """
     missing_count = df.isnull().sum().sum()
     if missing_count == 0:
         return df
 
     for col in df.columns:
-        if df[col].dtype == "object":
+        is_categorical = (
+            is_object_dtype(df[col]) or 
+            is_string_dtype(df[col]) or 
+            is_categorical_dtype(df[col])
+        )
+        
+        if is_categorical:
             if df[col].isnull().any():
                 df[col].fillna(df[col].mode().iloc[0], inplace=True)
         else:
@@ -60,7 +67,14 @@ def encode_categorical_columns(df: pd.DataFrame):
     encoders = {}
     df_copy = df.copy()
     for col in df_copy.columns:
-        if df_copy[col].dtype == "object":
+        # Check for object, string, or categorical types
+        is_categorical = (
+            is_object_dtype(df_copy[col]) or 
+            is_string_dtype(df_copy[col]) or 
+            is_categorical_dtype(df_copy[col])
+        )
+        
+        if is_categorical:
             le = LabelEncoder()
             df_copy[col] = df_copy[col].astype(str)
             df_copy[col] = le.fit_transform(df_copy[col])
